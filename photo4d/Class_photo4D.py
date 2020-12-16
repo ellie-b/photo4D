@@ -488,7 +488,7 @@ class Photo4d(object):
 if __name__ == "__main__":
     
     ## Initialyze the project
-     myproj = p4d.Photo4d(project_path=r"C:\Users\lucg\Desktop\Test_V1_2019")
+     myproj = Photo4d(project_path=r"F:\Kluane\Processing_workflow\photo4d_ftn_test")
     # myproj.sort_picture()
     # myproj.check_picture_quality()
     # myproj.prepare_gcp_files(r"C:\Users\lucg\Desktop\Test_V1_2019\GCPs_coordinates_manual.txt",file_format="N_X_Y_Z")

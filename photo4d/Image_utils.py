@@ -10,6 +10,7 @@ from datetime import datetime
 import pyxif, os
 import cv2 as cv
 import numpy as np
+import math
 import photo4d.Utils as utils
 
 
@@ -206,12 +207,12 @@ def load_bright(filename):
             return brightness
         except KeyError:
             print("WARNING No brightness data for file " + filename)
-            print("Check if your exif data contains a 'BrightnessValue' tag ")
-            return None
+            print("Brightness calculated from EXIF data ")
+        brightness=calc_brightness(exif_dict)
+        return brightness
     except FileNotFoundError:
         print("WARNING Could not find file " + filename )
         return None
-
 
 def calc_lum(filename):
     image_bgr = cv.imread(filename)
@@ -219,7 +220,17 @@ def calc_lum(filename):
     average_lum = cv.mean(cv.split(image_lab)[0])
     return average_lum
 
-
+def calc_brightness(exif_dict):
+    N = 0.297
+    num,denom = exif_dict[pyxif.PhotoGroup.ApertureValue][1]
+    Av = num/denom
+    num,denom = exif_dict[pyxif.PhotoGroup.ExposureTime][1]
+    T = num/denom
+    Sx = exif_dict[pyxif.PhotoGroup.ISOSpeedRatings][1]
+    # calculate brightness value based on APEX and EXIF standards and definitions
+    eq = (Av**2)/(T*Sx*N)
+    Bv = math.log(eq,2)
+    return Bv
 
 def process_clahe_folder(in_folder, tileGridSize, grey=False, out_folder="", clip_limit=2,new_name_end="_Clahe"):
     """
